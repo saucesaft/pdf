@@ -1,0 +1,29 @@
+
+- list of pdfs, 
+
+- a list of pdfs is consequently called a list,
+    - new list
+        - empty
+        - 
+    - drag page out of list creates new empty list with that page
+
+- effects with text
+    - e.g. to insert an image, you get real-time view and a box where you input (button that where click, it is changed to)
+
+
+two modes
+- list mode
+    - select, arrange, delete pages in list
+- editor mode
+    - view pages of lists and edit them
+
+- trash can for lists, and pages
+
+- assign ID to list, so if any list gets deleted
+
+TODOS
+- [] fix panics
+    - [] no filename
+    - [] no file found
+- [] another go routine for loading only
+- [] filesystem dialog
