@@ -41,7 +41,7 @@ type Renderer interface {
 	Render(displaySize [2]float32, framebufferSize [2]float32, drawData imgui.DrawData)
 }
 
-func run(p Platform, r Renderer, a pdf.App) {
+func run(p Platform, r Renderer, app pdf.App) {
 	imgui.CurrentIO().SetClipboard(clipboard{platform: p})
 
 	always := true
@@ -54,39 +54,24 @@ func run(p Platform, r Renderer, a pdf.App) {
 		p.NewFrame()
 		imgui.NewFrame()
 
-		// DEMO
+		// imgui demo
 		imgui.ShowDemoWindow(&always)
 
-        gui.NewListWindow(&a)
+		gui.NewListWindow(&app)
 
-        gui.ShowLists(&a)
+		gui.ShowFamilies(&app)
 
-		gui.NewPDFWindow(&a)
+		gui.NewPDFWindow(&app)
 
-        gui.ShowOrphans(&a)
-
-		// PDF (for each page in the lone pages in app)
-		/*    imgui.Begin("PDF")
-
-		      imgui.BeginChildV("No Move Child", imgui.Vec2{-1, -1}, false, imgui.WindowFlagsNoMove)
-
-		      if (imgui.BeginDragDropSource(0)) {
-		          imgui.SetDragDropPayload("PAGE", []byte{'L','O','L'}, 0)
-		          imgui.Text("PAGE")
-		          imgui.EndDragDropSource()
-		      }
-
-		      wsx := imgui.WindowSize().X
-		      imgui.Image(imgui.TextureID(t), imgui.Vec2{wsx, (wsx/w)*h })
-
-		      imgui.EndChild()
-
-		      imgui.End()*/
+		gui.ShowOrphans(&app)
 
 		ww := p.FramebufferSize()[0]
 		wh := p.FramebufferSize()[1]
 
-		gui.BackgroundDropHandler(ww, wh, &a)
+		gui.BackgroundDropHandler(ww, wh, &app)
+
+		// debug window
+		gui.DebugWin(&app)
 
 		// Rendering
 		imgui.Render()
@@ -119,6 +104,8 @@ func main() {
 	defer renderer.Dispose()
 
 	app := pdf.App{}
+
+	app.Init()
 
 	run(platform, renderer, app)
 }

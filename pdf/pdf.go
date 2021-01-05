@@ -2,34 +2,63 @@ package pdf
 
 import (
     "image"
-    "bytes"
-    "encoding/gob"
+    "strconv"
     "github.com/gen2brain/go-fitz"
-	"github.com/go-gl/gl/v3.2-core/gl"
+    "github.com/go-gl/gl/v3.2-core/gl"
+    "github.com/emirpasic/gods/maps/treemap"
 )
 
-type Page struct {
+type PageBase struct {
     Contents uint32
     W, H float32
-    Bytes []byte
-
-    RemoveIndex int
-    FatherList *List
+//    Bytes []byte // representation of a page message used for serialization
+    BaseIndex uint
+    Filename string
+  //  ShouldDelete bool
 }
 
-type List struct {
-    Pages []Page
+type Orphan struct { // lone page that lurks around
+    PageBase
+    OrphanID uint
+}
+func (o Orphan) GenTestingKey(argKey uint64) string {
+    oid := strconv.FormatUint(argKey, 10)
+    pid := strconv.FormatUint(uint64(o.BaseIndex), 10)
+
+    return o.Filename+"-"+oid+"-"+pid
+}
+func (o Orphan) GenKey() string {
+    oid := strconv.FormatUint(uint64(o.OrphanID), 10)
+    pid := strconv.FormatUint(uint64(o.BaseIndex), 10)
+
+    return o.Filename+"-"+oid+"-"+pid
 }
 
+type Page struct { // lone page that has a connection with another page
+    PageBase
+    FamilyID uint
+}
+
+func (p Page) GenKey() string {
+    fid := strconv.FormatUint(uint64(p.FamilyID), 10)
+    pid := strconv.FormatUint(uint64(p.BaseIndex), 10)
+
+    return p.Filename+"-"+fid+"-"+pid
+}
 type App struct {
-    Lists []List // global pages
-    Orphans []Page // orphan pages
+    Pages *treemap.Map
+    Orphans *treemap.Map
+    LastFamilyID uint
+}
+
+func (a *App) Init() {
+    a.Pages = treemap.NewWithStringComparator()
+    a.Orphans = treemap.NewWithStringComparator()
 }
 
 func (a *App) NewList() {
-    l := List {}
-
-    a.Lists = append(a.Lists, l)
+    // TODO will create an identifier for the list
+    // set it also on lastfamilyid
 }
 
 func getTexture(img image.Image) (uint32, float32, float32) {
@@ -77,36 +106,39 @@ func (a *App) LoadPdf(path *string) {
 
     imgs := imgsFromDoc(*path)
 
-    *path = ""
+    inPath := *path // assign to another variable for internal uses
+    *path = "" // clear the imGui input
 
-    l := List{}
+    var nextFamID uint
+
+    if a.LastFamilyID == 0 {
+	nextFamID = 1
+	a.LastFamilyID = nextFamID
+    } else {
+	nextFamID = a.LastFamilyID + 1
+	a.LastFamilyID = nextFamID
+    }
 
     for i, img := range imgs {
+	// prepare structs and textures
         tex, w, h  := getTexture(img)
-
         p := Page{}
-        b := bytes.Buffer{}
-	    enc := gob.NewEncoder(&b)
 
+	// setup struct
         p.Contents = tex
         p.W = float32(w)
         p.H = float32(h)
-        p.RemoveIndex = i
-        p.FatherList = &l
+	p.FamilyID = nextFamID
+	p.BaseIndex = uint(i)
+	p.Filename = inPath
 
-        err := enc.Encode(p)
-        if err != nil {
-            panic(err)
-        }
+	// generate key for treemap
+	pk := p.GenKey()
 
-        p.Bytes = b.Bytes()
-
-        l.Pages = append(l.Pages, p)
+	// insert page to treemap with corresponding key
+	a.Pages.Put(pk, p)
 
     }
 
-    a.Lists = append(a.Lists, l)
 
 }
-
-func (p *Page) Remove() {}

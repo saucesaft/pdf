@@ -128,7 +128,16 @@ func (platform *GLFW) NewFrame() {
 // PostRender performs a buffer swap.
 func (platform *GLFW) PostRender() {
 	platform.window.SwapBuffers()
-    glfw.WaitEvents()
+	glfw.WaitEvents()
+
+	// ugly workaround so that after each event
+	// we get around 5-6 frames for gui and loadings
+	glfw.PostEmptyEvent()
+	glfw.PostEmptyEvent()
+	glfw.PostEmptyEvent()
+	glfw.PostEmptyEvent()
+	glfw.PostEmptyEvent()
+	glfw.PostEmptyEvent()
 }
 
 func (platform *GLFW) setKeyMapping() {

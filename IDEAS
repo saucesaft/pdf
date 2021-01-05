@@ -27,3 +27,10 @@ TODOS
     - [] no file found
 - [] another go routine for loading only
 - [] filesystem dialog
+- [] TODOS in files
+- [x] check if adding new events line them up in glfw
+- [] exapandable orphan windows
+- [] background accept orphans but just move (find way to now highlight maybe?)
+- [] dragdrop from list to background sets window position
+- [] showFamilies dragdrop target extra check so pages exist or not
+- [] when using same pdf and dragging to same, create new selectable
