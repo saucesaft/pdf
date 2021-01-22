@@ -1,7 +1,9 @@
 #!/bin/sh
 
-echo Starting build...
+if [ "$1" = "run" ]; then
+    go run  -ldflags "-s -w -H=windowsgui -extldflags=-static" -race -gcflags=all=-d=checkptr=0 main.go
+else
+    go build  -ldflags "-s -w -H=windowsgui -extldflags=-static" -race -gcflags=all=-d=checkptr=0 main.go
+fi
 
-CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ GOARCH=amd64 GOOS=windows go build  -ldflags='-extldflags "-static"' -tags=static main.go
-
-echo Finished
+echo Done
