@@ -50,6 +50,11 @@ func (iterator *Iterator) Key() interface{} {
 	return iterator.iterator.Value()
 }
 
+// Key returns the current element's index
+func (iterator *Iterator) Index() int {
+	return iterator.iterator.Index()
+}
+
 // Begin resets the iterator to its initial state (one-before-first)
 // Call Next() to fetch the first element if any.
 func (iterator *Iterator) Begin() {

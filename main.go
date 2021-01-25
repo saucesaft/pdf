@@ -5,19 +5,19 @@ import (
 	"pdf/pdf"
 
 	g"github.com/AllenDang/giu"
-	im"github.com/AllenDang/giu/imgui"
+	//im"github.com/AllenDang/giu/imgui"
 
 )
 
 func loop(a *pdf.App) {
-	always := true
+	//always := true
 
 	g.SingleWindowWithMenuBar("pdf").Layout(g.Layout{
 		gui.MenuBar(a),
 		gui.Gui(a),
 	})
 
-	im.ShowDemoWindow(&always)
+	//im.ShowDemoWindow(&always)
 
 }
 

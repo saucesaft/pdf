@@ -17,12 +17,18 @@ type App struct {
     TextureMutex sync.Mutex
     HashmapMutex sync.Mutex
 
+    ShouldScroll bool
+    ScrollOffset float32
+    LastWidth float32
+
+
     Pages *structures.Map
 }
 
 func (a *App) Init () {
     a.Test = "Hello World"
     a.EditMode = false
+    a.ShouldScroll = false
 
     a.Pages = structures.NewLinkedHashMap()
 
@@ -65,6 +71,19 @@ func (a *App) Open() {
 
     }
 
+}
+
+func (a *App) ViewerScroll(s float32) {
+    a.ShouldScroll = true
+    a.ScrollOffset = s
+}
+
+func (a *App) FinishScroll() {
+    a.ShouldScroll = false
+}
+
+func (a *App) UpdateWidth(w float32) {
+    a.LastWidth = w
 }
 
 func preparePage(n int, filename string, nfid uint, doc *fitz.Document) (Page, Key){

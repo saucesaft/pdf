@@ -26,6 +26,12 @@ func (p Page) Key() Key {
 	return Key {p.Filename, p.DocId, p.FamId}
 }
 
+func (p *Page) UpdateSize(w, h float32) {
+	p.W = w
+	p.H = h
+}
+
+
 type Key struct {
 	Filename string
 	DocId, FamId uint

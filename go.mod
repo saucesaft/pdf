@@ -2,6 +2,8 @@ module pdf
 
 go 1.15
 
+replace github.com/AllenDang/giu => C:/msys64/home/eduar/giu
+
 require (
 	github.com/AllenDang/giu v0.5.0
 	github.com/JoshVarga/svgparser v0.0.0-20200804023048-5eaba627a7d1
